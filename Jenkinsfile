@@ -94,11 +94,11 @@ TestUtils.runParallelMultiArchTest(
       stage ('Run Test') {
         if (config.runOnSlave) {
           sh "ansible-playbook -i 'localhost,' -c local ${TEST_DIR}/ansible-playbooks/*/playbook.yml"
-          sh "for i in ${TEST_DIR}/scripts/*/run-test.sh; do bash $i; done"
+          sh "for i in ${TEST_DIR}/scripts/*/run-test.sh; do bash \$i; done"
         }
         else {
           sh "ansible-playbook -i '${host.inventory}' ${TEST_DIR}/ansible-playbooks/*/playbook.yml"
-          sh "for i in ${TEST_DIR}/scripts/*/run-test.sh; do ssh root@${host.inventory} < $i; done"
+          sh "for i in ${TEST_DIR}/scripts/*/run-test.sh; do ssh root@${host.inventory} < \$i; done"
         }
       }
 
