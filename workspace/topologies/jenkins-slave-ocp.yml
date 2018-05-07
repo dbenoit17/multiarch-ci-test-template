@@ -8,12 +8,9 @@ resource_groups:
         role: openshift_inline
         data:
           - apiVersion: v1
-            kind: ReplicationController
-            metadata:
-              name: jenkins-slave
-              namespace: redhat-multiarch-qe
+            kind: DeploymentConfig
             spec:
-              replicas: 7
+              replicas: 1
               selector:
                 name: jenkins-slave
               template:
