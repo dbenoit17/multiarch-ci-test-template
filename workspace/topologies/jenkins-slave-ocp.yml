@@ -11,7 +11,7 @@ resource_groups:
             kind: ReplicationController
             metadata:
               name: jenkins-slave
-              namespace: multiarch-ci-test
+              namespace: redhat-multiarch-qe
             spec:
               replicas: 7
               selector:
