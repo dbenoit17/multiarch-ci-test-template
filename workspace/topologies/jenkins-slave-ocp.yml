@@ -9,26 +9,20 @@ resource_groups:
         data:
           - apiVersion: v1
             kind: DeploymentConfig
+            metadata:
+              name: jenkins-slave
             spec:
-              replicas: 1
-              selector:
-                name: jenkins-slave
-              template:
-                metadata:
-                  labels:
-                    name: jenkins-slave
-                spec:
-                  containers:
-                    - image: redhatqecinch/jenkins_slave:latest
-                      name: jenkins-slave
-                      env:
-                        - name: JENKINS_MASTER_URL
-                          value: http://localhost/
-                        - name: JSLAVE_NAME
-                          value: mynode
-                  restartPolicy: Always
-                  securityPolicy:
-                    runAsUser: 1000090000
+              containers:
+                - image: redhatqecinch/jenkins_slave:latest
+                  name: jenkins-slave
+                  env:
+                    - name: JENKINS_MASTER_URL
+                      value: http://localhost:8443/
+                    - name: JSLAVE_NAME
+                      value: mynode
+              restartPolicy: Always
+              securityPolicy:
+                runAsUser: 1000090000
     credentials:
       api_endpoint: localhost:8443/
       api_token: 0-aUnEovHl6oo0KVKu1VqKyU7azUNriaQNpXvniuVzc
