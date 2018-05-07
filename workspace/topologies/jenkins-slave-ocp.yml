@@ -1,0 +1,38 @@
+---
+topology_name: jenkins-slave
+resource_groups:
+  - resource_group_name: openshift-slaves
+    resource_group_type: openshift
+    resource_definitions:
+      - name: openshift
+        role: openshift_inline
+        data:
+          - apiVersion: v1
+            kind: ReplicationController
+            metadata:
+              name: jenkins-slave
+              namespace: multiarch-ci-test
+            spec:
+              replicas: 7
+              selector:
+                name: jenkins-slave
+              template:
+                metadata:
+                  labels:
+                    name: jenkins-slave
+                spec:
+                  containers:
+                    - image: redhatqecinch/jenkins_slave:latest
+                      name: jenkins-slave
+                      env:
+                        - name: JENKINS_MASTER_URL
+                          value: http://localhost/
+                        - name: JSLAVE_NAME
+                          value: mynode
+                  restartPolicy: Always
+                  securityPolicy:
+                    runAsUser: 1000090000
+    credentials:
+      api_endpoint: localhost:8443/
+      api_token: 0-aUnEovHl6oo0KVKu1VqKyU7azUNriaQNpXvniuVzc
+

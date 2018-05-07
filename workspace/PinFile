@@ -1,5 +1,5 @@
 jenkins-slave:
-  topology: jenkins-slave.yml
+  topology: jenkins-slave-ocp.yml
   layout: jenkins-slave.yml
   {% if hooks %}
   hooks:
