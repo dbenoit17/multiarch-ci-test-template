@@ -42,14 +42,21 @@ properties(
   ]
 )
 
-library(
-  changelog: false,
-  identifier: "multiarch-ci-libraries@${params.LIBRARIES_REF}",
-  retriever: modernSCM([$class: 'GitSCMSource',remote: "${params.LIBRARIES_REPO}"])
-)
+try {
+  library(
+    changelog: false,
+    identifier: "multiarch-ci-libraries@${params.LIBRARIES_REF}",
+    retriever: modernSCM([$class: 'GitSCMSource',remote: "${params.LIBRARIES_REPO}"])
+  )
+} 
+catch(e) {
+  println "${e.message}"
+}
 
 List arches = params.ARCHES.tokenize(',')
 def config = TestUtils.getProvisioningConfig(this)
+
+config.connection = ConnType.CONTAINER
 
 TestUtils.runParallelMultiArchTest(
   this,
