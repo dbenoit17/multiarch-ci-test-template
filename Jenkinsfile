@@ -36,6 +36,11 @@ properties(
           defaultValue: '',
           description: 'Contains the CI_MESSAGE for a message bus triggered build.',
           name: 'CI_MESSAGE'
+        ),
+        string(
+          defaultValue: '',
+          description: 'Semi-colon delimited list of email notification recipients.',
+          name: 'EMAIL_SUBSCRIBERS'
         )
       ]
     )
@@ -83,6 +88,28 @@ MAQEAPI.v1.runParallelMultiArchTest(
     errorMessages += error
     if (host.arch.equals("x86_64") || host.arch.equals("ppc64le")) {
       currentBuild.result = 'FAILURE'
+    }
+  },
+  { // postTest
+    if (params.EMAIL_SUBSCRIBERS) {
+       def emailBody = "Results for ${env.JOB_NAME} - Build #${currentBuild.number}\n\nResult: ${currentBuild.currentResult}\nURL: $BUILD_URL"
+      try {
+        sh "mkdir -p artifacts"
+        unarchive(mapping: ['**/*.*' : 'artifacts/.'])
+      } catch (e) {
+        errorMessages += "Exception ${e} occured while unarchiving artifacts\n"
+      }
+      if (errorMessages) {
+        emailBody += "\nErrors: " + errorMessages
+      }
+      emailext(
+        subject: "${env.JOB_NAME} - Build #${currentBuild.number} - ${currentBuild.currentResult}",
+        body: emailBody,
+        from: 'multiarch-qe-jenkins',
+        replyTo: 'multiarch-qe',
+        to: "${params.EMAIL_SUBSCRIBERS}",
+        attachmentsPattern: 'artifacts/tests/scripts/rhel-system-roles/artifacts/**/*.*'
+      )
     }
   }
 )
